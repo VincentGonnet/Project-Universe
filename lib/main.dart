@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_universe/views/home_view.dart';
 
 import 'constants/routes.dart';
 import 'helpers/loading/loading_screen.dart';
@@ -57,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
         verifyEmailRoute: (context) => const VerifyEmailView(),
+        homeRoute: (context) => const HomeView(),
       },
     );
   }
@@ -79,7 +81,7 @@ class HomePage extends StatelessWidget {
       }
     }, builder: (context, state) {
       if (state is AuthStateLoggedIn) {
-        return const Text("Logged in");
+        return const HomeView();
       } else if (state is AuthStateNeedsVerification) {
         return const VerifyEmailView();
       } else if (state is AuthStateLoggedOut) {
