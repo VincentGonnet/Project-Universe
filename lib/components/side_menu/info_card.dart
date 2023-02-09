@@ -10,17 +10,21 @@ class InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: const CircleAvatar(
-        backgroundColor: Colors.white24,
-        child: Icon(
-          Icons.settings,
-          color: Colors.white,
+    return Container(
+      height: 162,
+      decoration: const BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(2),
+          bottomRight: Radius.circular(2),
         ),
       ),
-      title: Text(
-        universeName,
-        style: const TextStyle(color: Colors.white),
+      alignment: Alignment.bottomLeft,
+      child: ListTile(
+        title: Text(
+          universeName,
+          style: const TextStyle(color: Colors.white, fontSize: 18),
+        ),
       ),
     );
   }

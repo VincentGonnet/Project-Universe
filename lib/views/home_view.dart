@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_universe/components/side_menu/side_menu.dart';
+import 'package:project_universe/components/scaffold.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -11,6 +11,11 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
-    return SideMenu();
+    return const CustomScaffold(
+      displayName: "Home",
+      body: Center(
+        child: Text("Home"),
+      ),
+    );
   }
 }
