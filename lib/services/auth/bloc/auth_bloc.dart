@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:project_universe/services/auth/auth_provider.dart';
 import 'package:project_universe/services/auth/bloc/auth_event.dart';
+import 'package:project_universe/services/cloud/firebase_cloud_storage.dart';
 
 import 'auth_state.dart';
 
@@ -22,11 +23,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventRegister>((event, emit) async {
       final email = event.email;
       final password = event.password;
+      final userName = event.userName;
+      final displayName = event.displayName;
       try {
         await provider.createUser(
           email: email,
           password: password,
+          username: userName,
+          displayName: displayName,
         );
+
+        await FirebaseCloudStorage().createUser(
+          uid: provider.currentUser!.id,
+          username: userName,
+          email: email,
+          displayName: displayName,
+        );
+
         await provider.sendEmailVerification();
         emit(const AuthStateNeedsVerification(isLoading: false));
       } on Exception catch (e) {

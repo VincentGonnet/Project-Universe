@@ -26,7 +26,14 @@ class AuthEventSendEmailVerification extends AuthEvent {
 class AuthEventRegister extends AuthEvent {
   final String email;
   final String password;
-  const AuthEventRegister(this.email, this.password);
+  final String userName;
+  final String displayName;
+  const AuthEventRegister(
+    this.email,
+    this.password,
+    this.userName,
+    this.displayName,
+  );
 }
 
 // equivalent of LoggedOut, but for register view
