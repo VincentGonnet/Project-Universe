@@ -1,3 +1,4 @@
+import 'package:heroicons/heroicons.dart';
 import 'package:project_universe/services/auth/auth_exceptions.dart';
 import 'package:project_universe/services/auth/bloc/auth_bloc.dart';
 import 'package:project_universe/services/auth/bloc/auth_event.dart';
@@ -7,6 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:project_universe/utilities/dialogs/error_dialog.dart';
+
+import '../../constants/colors.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -32,6 +35,12 @@ class _LoginViewState extends State<LoginView> {
     _password.dispose();
     super.dispose();
   }
+
+  Color _emailFieldColor = Colors.black45;
+  Color _passwordFieldColor = Colors.black45;
+  bool _isPasswordVisible = false;
+  HeroIcon _passwordFieldIcon =
+      HeroIcon(HeroIcons.eyeSlash, color: Colors.black45);
 
   @override
   Widget build(BuildContext context) {
@@ -62,69 +71,163 @@ class _LoginViewState extends State<LoginView> {
             const Spacer(flex: 1),
             Container(
               padding: const EdgeInsets.only(bottom: 30),
+              alignment: Alignment.centerLeft,
               child: Text(
-                "Project Universe",
-                style: GoogleFonts.montserrat(
-                  fontSize: 30,
-                  fontStyle: FontStyle.italic,
+                "Login",
+                style: GoogleFonts.nunitoSans(
+                  color: loginTitleColor,
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            TextField(
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                hintText: 'Enter your email here.',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
+            Row(
+              children: [
+                const HeroIcon(
+                  HeroIcons.atSymbol,
+                  color: Colors.black45,
                 ),
-                labelText: "Email",
-              ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Focus(
+                    onFocusChange: (hasFocus) {
+                      setState(() => _emailFieldColor =
+                          hasFocus ? loginAccentColor : Colors.black45);
+                    },
+                    child: TextField(
+                      controller: _email,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        labelText: "Email",
+                        labelStyle: TextStyle(
+                          color: _emailFieldColor,
+                        ),
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: loginAccentColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             Container(
               margin: const EdgeInsets.only(top: 10),
-              child: TextField(
-                controller: _password,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                decoration: const InputDecoration(
-                  hintText: 'Enter your password here.',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+              child: Row(
+                children: [
+                  const HeroIcon(
+                    HeroIcons.lockClosed,
+                    color: Colors.black45,
                   ),
-                  labelText: "Password",
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Focus(
+                      onFocusChange: (hasFocus) {
+                        setState(() => _passwordFieldColor =
+                            hasFocus ? loginAccentColor : Colors.black45);
+                      },
+                      child: TextField(
+                        controller: _password,
+                        obscureText: !_isPasswordVisible,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        decoration: InputDecoration(
+                          labelText: "Password",
+                          suffixIcon: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (_isPasswordVisible) {
+                                    _passwordFieldIcon = const HeroIcon(
+                                      HeroIcons.eyeSlash,
+                                      color: Colors.black45,
+                                    );
+                                  } else {
+                                    _passwordFieldIcon = const HeroIcon(
+                                      HeroIcons.eye,
+                                      color: loginAccentColor,
+                                    );
+                                  }
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
+                              child: _passwordFieldIcon),
+                          labelStyle: TextStyle(
+                            color: _passwordFieldColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(
+                        const AuthEventForgotPassword(),
+                      );
+                },
+                child: const Text(
+                  "Forgot password?",
+                  style: TextStyle(
+                    color: loginAccentColor,
+                  ),
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                if (email == "" || password == "") {
-                  return await showErrorDialog(
-                      context, "Please specify an email and a password");
-                }
-                context.read<AuthBloc>().add(AuthEventLogIn(email, password));
-              },
-              child: const Text("Login"),
+            Container(
+              margin: const EdgeInsets.only(top: 30),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: loginAccentColor,
+                  minimumSize: const Size(double.infinity, 40),
+                ),
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  if (email == "" || password == "") {
+                    return await showErrorDialog(
+                        context, "Please specify an email and a password");
+                  }
+                  context.read<AuthBloc>().add(AuthEventLogIn(email, password));
+                },
+                child: const Text(
+                  "Login",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
             ),
-            const Spacer(flex: 2),
-            TextButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(
-                      const AuthEventForgotPassword(),
-                    );
-              },
-              child: const Text("Forgot password"),
-            ),
+            const Spacer(flex: 1),
             TextButton(
               onPressed: () {
                 context.read<AuthBloc>().add(
                       const AuthEventShouldRegister(),
                     );
               },
-              child: const Text("Not registered yet? Register here!"),
+              child: RichText(
+                text: const TextSpan(
+                  style: TextStyle(
+                    color: Colors.black45,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(text: "Don't have an account yet? "),
+                    TextSpan(
+                      text: "Sign up",
+                      style: TextStyle(
+                        color: loginAccentColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
